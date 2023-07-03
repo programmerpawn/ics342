@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,6 +31,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.ics342.ui.theme.ICS342Theme
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 
 class MainActivity : ComponentActivity() {
@@ -110,17 +118,64 @@ fun WeatherView() {
 
                 )
             }
-
         }
     }
-
-
 }
+
+//Navigation function: home screen and detail screen
+@Composable
+fun NavigationView() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "home") {
+        composable("home") {
+            HomeScreen(navController)
+        }
+        composable("Forecast") {
+            ForeCastDetailScreen(
+                onHome = { navController.popBackStack() }
+            )
+        }
+    }
+}
+
+@Composable
+fun HomeScreen(navController: NavHostController) {
+    Column(
+        Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Button(
+            onClick = { navController.navigate("Forecast") },
+            colors = ButtonDefaults.buttonColors(Color.Gray.copy(alpha = .5F)),
+        ) { Text(text = "Forecast")}
+    }
+}
+
+@Composable
+fun ForeCastDetailScreen(onHome: () -> Unit) {
+    Column(
+        Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
+        Text(
+            text = stringResource(id = R.string.forecast_name),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Gray)
+                .padding(10.dp)
+        )
+        Button(onClick = onHome) { Text("Go back to Home Screen") }
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     ICS342Theme {
         WeatherView()
+        NavigationView()
     }
 }
