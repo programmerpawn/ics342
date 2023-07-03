@@ -34,6 +34,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+//creates the wheatherView function.
 @Composable
 fun WeatherView() {
     Column(
