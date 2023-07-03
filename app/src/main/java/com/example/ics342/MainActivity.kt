@@ -31,6 +31,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.ics342.ui.theme.ICS342Theme
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -48,7 +50,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {}
             }
-            WeatherView()
+
+            NavigationView()
         }
     }
 }
@@ -115,7 +118,6 @@ fun WeatherView() {
                     contentDescription = "sun",
                     contentScale = ContentScale.FillBounds,
                     modifier = imageMod
-
                 )
             }
         }
@@ -125,15 +127,14 @@ fun WeatherView() {
 //Navigation function: home screen and detail screen
 @Composable
 fun NavigationView() {
+
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
             HomeScreen(navController)
         }
-        composable("Forecast") {
-            ForeCastDetailScreen(
-                onHome = { navController.popBackStack() }
-            )
+        composable(Screens.ForecastScreen.route) {
+            ForecastScreen(navController)
         }
     }
 }
@@ -146,29 +147,13 @@ fun HomeScreen(navController: NavHostController) {
         verticalArrangement = Arrangement.Center
     ) {
         Button(
-            onClick = { navController.navigate("Forecast") },
-            colors = ButtonDefaults.buttonColors(Color.Gray.copy(alpha = .5F)),
+            onClick = {navController.navigate(Screens.ForecastScreen.route)},
+            colors = ButtonDefaults.buttonColors(Color.Gray.copy(alpha = 1F)),
         ) { Text(text = "Forecast")}
     }
+    WeatherView()
 }
 
-@Composable
-fun ForeCastDetailScreen(onHome: () -> Unit) {
-    Column(
-        Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Text(
-            text = stringResource(id = R.string.forecast_name),
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.Gray)
-                .padding(10.dp)
-        )
-        Button(onClick = onHome) { Text("Go back to Home Screen") }
-    }
-}
 
 
 @Preview(showBackground = true)
